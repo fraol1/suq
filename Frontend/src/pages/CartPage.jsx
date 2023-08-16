@@ -31,6 +31,10 @@ const CartPage = () => {
     dispatch(removeFromCart(id));
   };
 
+  const checkoutHandler = () => {
+    navigate("/login?redirect=/shipping");
+  };
+
   return (
     <Row>
       <Col md={8}>
@@ -55,7 +59,9 @@ const CartPage = () => {
                     <Form.Control
                       as='select'
                       value={item.qty}
-                      onChange={(e) => addToCartHandler(item,Number(e.target.value))}>
+                      onChange={(e) =>
+                        addToCartHandler(item, Number(e.target.value))
+                      }>
                       {[...Array(item.countInStock).keys()].map((x) => (
                         <option key={x + 1} value={x + 1}>
                           {x + 1}
@@ -91,7 +97,8 @@ const CartPage = () => {
               <Button
                 type='button'
                 className='btn-block'
-                disabled={cartItems.length === 0}>
+                disabled={cartItems.length === 0}
+                onClick={checkoutHandler}>
                 Proceed to checkout
               </Button>
             </ListGroup.Item>

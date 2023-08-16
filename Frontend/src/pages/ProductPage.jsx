@@ -27,6 +27,7 @@ const ProductPage = () => {
   const navigate = useNavigate()
   
   const addToCartHandler = () => {
+    console.log({...product,qty})
     dispatch(addToCart({...product,qty}))
     navigate('/cart') 
   };

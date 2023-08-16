@@ -8,9 +8,11 @@ const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user) {
-      const isMatch = bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(password, user.password);
+      console.log(isMatch)
       if (!isMatch) {
         res.status(400).json({ message: "password doesn't match" });
+        return
       }
 
       generateToken(res, user._id);
@@ -27,6 +29,7 @@ const login = async (req, res) => {
 };
 
 const Register = async (req, res) => {
+  
   const { name, email, password } = req.body;
 
   try {
@@ -34,19 +37,23 @@ const Register = async (req, res) => {
 
     if (existingUser) {
       res.status(400).json({ message: "user with that email already exist" });
-    } else {
-      const salt = await bcrypt.genSalt(10);
-      const hashed = await bcrypt.hash(password, salt);
-
-      const new_user = await User.create({ name, email, password: hashed });
-      if (new_user) {
-        generateToken(req, new_user._id);
-
-        res.status(201).json(new_user);
-      } else {
-        res.status(400).json({ message: "Invalid user data" });
-      }
+      return
     }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashed = await bcrypt.hash(password, salt);
+
+    const new_user = await User.create({ name, email, password: hashed });
+    
+    if (new_user) {
+      console.log("herer");
+      generateToken(res, new_user._id);
+
+      res.status(201).json(new_user);
+    } else {
+      res.status(400).json({ message: "Invalid user data" });
+    }
+    
   } catch (error) {
     res.status(400).json({
       message: "Can't register. please try again later",
@@ -56,6 +63,7 @@ const Register = async (req, res) => {
 };
 
 const logout = (req, res) => {
+  console.log("here")
   res.cookie("jwt", "", {
     httpOnly: true,
     expires: new Date(0),
@@ -65,6 +73,7 @@ const logout = (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
+    console.log(req.user)
     const userId = req.user.id;
     const user = await User.findById(userId);
     if (user) {
