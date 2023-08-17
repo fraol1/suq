@@ -1,4 +1,19 @@
- div a{
+ @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;800&family=VT323&display=swap");
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    
+}
+
+body {
+  background: linear-gradient(to bottom, #102a4a, #2953ad);
+}
+
+div a{
   color: black;
   text-decoration: none;
 }
