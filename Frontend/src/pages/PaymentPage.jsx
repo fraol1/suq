@@ -1,22 +1,54 @@
 import FormContainer from '../Component/FormContainer'
 import CheckoutSteps from "../Component/CheckoutSteps";
-import { Col, Form } from 'react-bootstrap'
-import {useState} from "react"
+import { Button, Col, Form } from 'react-bootstrap'
+import {useEffect, useState} from "react"
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { savePayment } from '../slices/cartSlice';
 
 const PaymentPage = () => {
-  const [paymentMethod,setpaymentMethod] = useState('paypal')
+  const navigate = useNavigate();
+  const cart = useSelector((state) => state.cart);
+  const { shippingAddress } = cart;
+
+  useEffect(() => {
+    if (!shippingAddress.address) {
+      navigate("/shipping");
+    }
+  }, [navigate, shippingAddress]);
+
+  const [paymentMethod, setPaymentMethod] = useState("PayPal");
+
+  const dispatch = useDispatch();
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(savePayment(paymentMethod));
+    navigate("/placeorder");
+  };
   return (
     <FormContainer>
       <CheckoutSteps step1 step2 step3 />
       <h1>Payment Method</h1>
-      <Form>
+      <Form onSubmit={submitHandler}>
         <Form.Group>
-          <Form.Label as={"legend"}>
-            <Col>
-              <Form.Check type='radio' className='my-2' label = 'paypal or creditCard' id = 'paypal' name='paymentMethod' value={'paypal'} checked onChange={(e)=> setPaymentMethod(e.target.value)}></Form.Check>
-            </Col>
-          </Form.Label>
+          <Form.Label as='legend'>Select Method</Form.Label>
+          <Col>
+            <Form.Check
+              className='my-2'
+              type='radio'
+              label='PayPal or Credit Card'
+              id='PayPal'
+              name='paymentMethod'
+              value='PayPal'
+              checked
+              onChange={(e) => setPaymentMethod(e.target.value)}></Form.Check>
+          </Col>
         </Form.Group>
+
+        <Button type='submit' variant='primary'>
+          Continue
+        </Button>
       </Form>
     </FormContainer>
   );
